@@ -39,12 +39,14 @@ function drawCameraIntoCanvas() {
     
     if (body) {
         // draw circle for left and right wrist
-        const leftShoulder = body.getBodyPart(bodyParts.leftShoulder)
-        const rightShoulder = body.getBodyPart(bodyParts.rightShoulder)
-        const leftWrist = body.getBodyPart(bodyParts.leftWrist)
-        const rightWrist = body.getBodyPart(bodyParts.rightWrist)
-        const leftHip = body.getBodyPart(bodyParts.leftHip)
-        const rightHip = body.getBodyPart(bodyParts.rightHip)
+        const leftShoulder = body.getBodyPart(bodyParts.leftShoulder);
+        const rightShoulder = body.getBodyPart(bodyParts.rightShoulder);
+        const leftWrist = body.getBodyPart(bodyParts.leftWrist);
+        const rightWrist = body.getBodyPart(bodyParts.rightWrist);
+        const leftHip = body.getBodyPart(bodyParts.leftHip);
+        const rightHip = body.getBodyPart(bodyParts.rightHip);
+        const leftElbow = body.getBodyPart(bodyParts.leftElbow);
+        const rightElbow = body.getBodyPart(bodyParts.rightElbow);
      
 
         // draw left wrist
@@ -59,16 +61,16 @@ function drawCameraIntoCanvas() {
         ctx.fillStyle = 'pink'
         ctx.fill()
 
-        // ctx.beginPath();
-        // ctx.arc(leftWrist.position.x, leftWrist.position.y, 10, 0, 2 * Math.PI);
-        // ctx.fillStyle = 'yellow'
-        // ctx.fill()
+        ctx.beginPath();
+        ctx.arc(leftElbow.position.x, leftElbow.position.y, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = 'yellow'
+        ctx.fill()
 
-        // // draw right wrist
-        // ctx.beginPath();
-        // ctx.arc(rightWrist.position.x, rightWrist.position.y, 10, 0, 2 * Math.PI);
-        // ctx.fillStyle = 'yellow'
-        // ctx.fill()
+        // draw right wrist
+        ctx.beginPath();
+        ctx.arc(rightElbow.position.x, rightElbow.position.y, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = 'yellow'
+        ctx.fill()
 
         ctx.beginPath();
         ctx.arc(leftShoulder.position.x, leftShoulder.position.y, 10, 0, 2 * Math.PI);
