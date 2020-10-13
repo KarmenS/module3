@@ -18,6 +18,7 @@ bodies.addEventListener('bodiesDetected', (e) => {
     const distance = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftHip, bodyParts.rightHip))
     document.getElementById('output').innerText = `Distance between hips: ${distance}`
     body.getDistanceBetweenBodyParts(bodyParts.leftHip, bodyParts.rightHip)
+    
 })
 
 // get elements
@@ -27,9 +28,14 @@ let ctx = canvas.getContext("2d");
 
 function stopIt(){
     bodies.stop();
+    console.log("bye");
+}
+function startIt(){
+    bodies.start();
     console.log("hello");
 }
 document.getElementById('stopButton').addEventListener('click', stopIt);
+document.getElementById('startButton').addEventListener('click', startIt);
 
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
@@ -89,7 +95,7 @@ function drawCameraIntoCanvas() {
 /* ----- run ------ */
 
 // start body detecting 
-bodies.start()
+
 // draw video and body parts into canvas continously 
 drawCameraIntoCanvas();
 
