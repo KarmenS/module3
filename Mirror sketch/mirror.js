@@ -66,7 +66,9 @@ function drawCameraIntoCanvas() {
     flipContext();
     // draw the video element into the canvas
     ctx.drawImage(video, 0, 0, video.width, video.height);
-     // translate context to center of canvas
+    
+    flipContext();
+    ctx.drawImage(video, 0, 0, video.width, video.height);
     
     if (body) {
         // draw circle for left and right wrist
@@ -103,8 +105,7 @@ function drawCameraIntoCanvas() {
        //  console.log("RightWristY   :"+rightWrist.position.y);
         
     }
-    flipContext();
-    ctx.fillRect(20,20, 40, 40);
+    
     requestAnimationFrame(drawCameraIntoCanvas)
     
 }
