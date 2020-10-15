@@ -32,9 +32,6 @@ bodies.addEventListener('bodiesDetected', (e) => {
     if(RwristToLShoulderDistance < 30){
         console.log("Right wrist and left shoulder connected");
    }
-    
-
-
 
 })
 
@@ -42,6 +39,11 @@ bodies.addEventListener('bodiesDetected', (e) => {
 let video = document.getElementById("video");
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
+ // translate context to center of canvas
+ ctx.translate(canvas.width / 1, canvas.height / 10);
+
+ // flip context horizontally
+ ctx.scale(-1, 1);
 
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
