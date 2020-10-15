@@ -39,17 +39,32 @@ bodies.addEventListener('bodiesDetected', (e) => {
 let video = document.getElementById("video");
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
- // translate context to center of canvas
- ctx.translate(canvas.width / 1, canvas.height / 10);
 
- // flip context horizontally
- ctx.scale(-1, 1);
+
+
+let isFlipped = false;
+function flipContext(){
+if(isFlipped == false){
+    ctx.translate(canvas.width, 0);
+    // flip context horizontally
+    ctx.scale(-1, 1);
+    isFlipped = true;
+    
+} else if(isFlipped == true){
+    ctx.translate(canvas.width, 0);
+    // flip context horizontally
+    ctx.scale(-1, 1);
+    isFlipped = false;
+
+}
+}
 
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
-
+    flipContext();
     // draw the video element into the canvas
     ctx.drawImage(video, 0, 0, video.width, video.height);
+     // translate context to center of canvas
     
     if (body) {
         // draw circle for left and right wrist
@@ -81,13 +96,19 @@ function drawCameraIntoCanvas() {
          ctx.arc(rightShoulder.position.x, rightShoulder.position.y, 10, 0, 2 * Math.PI);
          ctx.fillStyle = 'blue'
          ctx.fill()
+        
     }
+    flipContext();
+    ctx.fillRect(20,20, 40, 40)
     requestAnimationFrame(drawCameraIntoCanvas)
+    
 }
 
 /* ----- run ------ */
 
 // start body detecting 
 bodies.start()
+
+
 // draw video and body parts into canvas continously 
 drawCameraIntoCanvas();
