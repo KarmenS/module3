@@ -1,0 +1,28 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>My New Sketch</title>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+  <script src= "https://unpkg.com/@reactivex/rxjs@6.6.3/dist/global/rxjs.umd.js"></script>
+  <script src="../../lib/bodydetection.js"></script>
+</head>
+
+<body>
+
+  <canvas id="canvas" width="740" height="480" style="display: block;  margin-left: auto;
+  margin-right: 400;"></canvas>
+  <video id="video" width="640" height="480" autoplay style="display: none"></video>
+  <div id="output"></div>
+  <div id ="buttons" style="margin-left: 45%;">
+  <button id="startButton" > Start </button>
+  <button id="stopButton" > Stop </button>
+  </div>
+
+  <script src="secondsketch.js"></script>
+</body>
+
+</html>
