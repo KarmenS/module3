@@ -49,14 +49,17 @@ function drawCameraIntoCanvas() {
     const rightAnkle = body.getBodyPart(bodyParts.rightAnkle);
    
     const eyeDist = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftEye, bodyParts.rightEye))
-    console.log(eyeDist);
+    const wristDist = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))
+
+    let wristsConnected = false; 
 
     // draw nose
     ctx.beginPath();
     ctx.arc(nose.position.x, nose.position.y, eyeDist *1.7, 0, 2 * Math.PI);
     ctx.fillStyle = '#2B2A2A'
     ctx.fill()
-
+    
+    ctx.lineWidth= "20";
     connectParts(leftShoulder, rightShoulder);
     connectParts(leftShoulder, leftElbow);
     connectParts(leftElbow, leftWrist);
@@ -70,7 +73,15 @@ function drawCameraIntoCanvas() {
     connectParts(leftKnee, leftAnkle);
     connectParts(rightKnee, rightAnkle);
 
-
+    if(wristDist < 30){
+      wristsConnected = true;
+    }
+    if (wristsConnected == true){
+      connectPartsVariableThickness(leftWrist, rightWrist, 50 - wristDist/2);
+    }
+    if (wristDist >= 150){
+      wristsConnected = false;
+    }
    
  }
   window.requestAnimationFrame(drawCameraIntoCanvas);
@@ -83,6 +94,15 @@ function connectParts(part1, part2) {
   ctx.moveTo(part1.position.x, part1.position.y);
   ctx.lineTo(part2.position.x, part2.position.y);
   ctx.stroke();
+}
+
+function connectPartsVariableThickness(part1, part2, thickness) {
+  ctx.strokeStyle= "#2B2A2A";
+  ctx.lineWidth = thickness;
+  ctx.moveTo(part1.position.x, part1.position.y);
+  ctx.lineTo(part2.position.x, part2.position.y);
+  ctx.stroke();
+  
 }
 
 
