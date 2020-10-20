@@ -2,7 +2,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>SquareMovement</title>
+  <title>Circle Sketch</title>
+  
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
@@ -11,9 +12,17 @@
 </head>
 
 <body>
-  <canvas id="canvas" width="640" height="480" style="position: absolute; top: 0; left: 0;"></canvas>
-  <canvas id="canvas2" width="640" height="480" style="position: absolute; top: 0; left: 0;" ></canvas>
+  <canvas id="canvas" width="740" height="480" style="display: block;  margin-left: auto;
+  margin-right: 400;">
+  </canvas>
   <video id="video" width="640" height="480" autoplay style="display: none"></video>
-  <script src="squaremovement.js"></script>
+  <div id="output"></div>
+  <div id ="buttons" style="margin-left: 45%;">
+  <button id="startButton" > Start </button>
+  <button id="stopButton" > Stop </button>
+
+  </div>
+  <script src="sketch.js"></script>
 </body>
 
+</html>

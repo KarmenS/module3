@@ -3,6 +3,9 @@
 
 /* ----- setup ------ */
 
+const { tween, styler, easing, keyframes } = window.popmotion;
+
+
 // sets up a bodystream with configuration object
 const bodies = new BodyStream ({
       posenet: posenet,
@@ -21,6 +24,12 @@ bodies.addEventListener('bodiesDetected', (e) => {
     
     
 })
+
+const element1 = document.getElementById("rectangle") ;
+
+const rectangleStyler = styler(element1);
+
+
 
 // get elements
 let video = document.getElementById("video");
@@ -55,10 +64,24 @@ function startIt(){
 document.getElementById('stopButton').addEventListener('click', stopIt);
 document.getElementById('startButton').addEventListener('click', startIt);
 
+function makeItMove(){
+    tween({
+        from: 1600,
+        to: 10,
+        duration: 5000
+    }).start(
+        function (value) {
+            rectangleStyler.set('x', value);
+        }
+    ); 
+    
+}
+
+
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
     flipContext();
-
+   
     // draw the video element into the canvas
    ctx.drawImage(video, 0, 0, video.width, video.height);
    //ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -79,8 +102,10 @@ function drawCameraIntoCanvas() {
         const rightAnkle = body.getBodyPart(bodyParts.rightAnkle);
         const leftKnee = body.getBodyPart(bodyParts.leftKnee);
         const rightKnee = body.getBodyPart(bodyParts.rightKnee);
+        
 
         
+       
     //     ctx.beginPath();
     //     ctx.moveTo(nose.position.x, nose.position.y);
     //     ctx.lineTo(rightWrist.position.x, rightWrist.position.y);
@@ -95,10 +120,48 @@ function drawCameraIntoCanvas() {
         
 
 
-        ctx.strokeRect(150, 50, 100, 100);
-        //ctx.fillRect(50, 50, 100, 100);
-        ctx.fillStyle = 'pink';
         
+          
+        // if(rightWrist.position.x > 150 && rightWrist.position.x < 170 ){
+        //     ctx.strokeStyle = 'black';
+        // }
+
+        //equilibrium of the body
+
+        
+            let centroidx = (nose.position.x + leftShoulder.position.x + rightShoulder.position.x + leftWrist.position.x + rightWrist.position.x + leftElbow.position.x + rightElbow.position.x + leftHip.position.x + rightHip.position.x) / 9 ; 
+            let centroidy = (nose.position.x + leftShoulder.position.y + rightShoulder.position.y + leftWrist.position.y + rightWrist.position.y + leftElbow.position.y + rightElbow.position.y + leftHip.position.y + rightHip.position.y) / 9 ; 
+            //console.log(centroidy);
+
+            ctx.beginPath();
+            ctx.arc(centroidx, centroidy, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = 'pink';
+            ctx.fill();
+
+            ctx.strokeRect(video.width/2 - 90,video.height/2-10, 180, 160);
+        //ctx.fillRect(50, 50, 100, 100);
+        ctx.strokeStyle = 'pink';
+
+          if(centroidx < 260 && centroidx > 225 && centroidy < 400   && centroidy > 370){
+
+            ctx.strokeStyle = 'blue'
+          }
+
+          if(centroidx < 260 && centroidx > 225 && centroidy < 237   && centroidy > 200){
+
+            ctx.strokeStyle = 'purple'
+          }
+
+          if(centroidx < 435 && centroidx > 400 && centroidy <  400 && centroidy > 370 ){
+
+            ctx.strokeStyle = 'green'
+          }
+
+          if(centroidx < 435 && centroidx > 400 && centroidy <  237 && centroidy > 200 ){
+
+            ctx.strokeStyle = 'yellow'
+          }
+
 
         // draw left wrist
         // ctx.beginPath();
@@ -135,15 +198,19 @@ function drawCameraIntoCanvas() {
         // ctx.fill()
     }
     flipContext();
-    requestAnimationFrame(drawCameraIntoCanvas)
-}
 
+    requestAnimationFrame(drawCameraIntoCanvas)
+    
+}
+//makeItMove();
 /* ----- run ------ */
 
 // start body detecting 
 
 // draw video and body parts into canvas continously 
+
 drawCameraIntoCanvas();
+
 
  
  

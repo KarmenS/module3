@@ -1,0 +1,10 @@
+.rectangle {
+    position:bottom;
+    overflow: visible;
+    width: 400px;
+    height: 200px;
+    left: 120px;
+    top: 470px;
+    background-color:'black';
+    display: flex;
+}

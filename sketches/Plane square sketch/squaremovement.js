@@ -15,8 +15,8 @@ let body
 
 bodies.addEventListener('bodiesDetected', (e) => {
     body = e.detail.bodies.getBodyAt(0)
-    const distance = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))
-    document.getElementById('output').innerText = `Distance between wrists: ${distance}`
+    //const distance = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))
+    //document.getElementById('output').innerText = `Distance between wrists: ${distance}`
     body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist)
     
     
@@ -25,7 +25,9 @@ bodies.addEventListener('bodiesDetected', (e) => {
 // get elements
 let video = document.getElementById("video");
 let canvas = document.getElementById("canvas");
+let canvas2 = document.getElementById("canvas2");
 let ctx = canvas.getContext("2d");
+let ctx2= canvas2.getContext("2d");
 
 let isFlipped = false;
 function flipContext(){
@@ -44,11 +46,29 @@ if(isFlipped == false){
 }
 }
 
+let isFlipped2 = false;
+function flipContext2(){
+if(isFlipped2 == false){
+    ctx2.translate(canvas2.width, 0);
+    // flip context horizontally
+    ctx2.scale(-1, 1);
+    isFlipped2 = true;
+    
+} else if(isFlipped2 == true){
+    ctx2.translate(canvas2.width, 0);
+    // flip context horizontally
+    ctx2.scale(-1, 1);
+    isFlipped2= false;
+
+}
+}
+
 
 
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
     flipContext();
+    flipContext2();
 
     // draw the video element into the canvas
    ctx.drawImage(video, 0, 0, video.width, video.height);
@@ -70,7 +90,8 @@ function drawCameraIntoCanvas() {
         const rightAnkle = body.getBodyPart(bodyParts.rightAnkle);
         const leftKnee = body.getBodyPart(bodyParts.leftKnee);
         const rightKnee = body.getBodyPart(bodyParts.rightKnee);
-
+        //console.log(" Xpos: " + rightWrist.position.x);
+        
         
     //     ctx.beginPath();
     //     ctx.moveTo(nose.position.x, nose.position.y);
@@ -86,22 +107,32 @@ function drawCameraIntoCanvas() {
         
 
 
-        ctx.strokeRect(150, 50, 100, 100);
-        //ctx.fillRect(50, 50, 100, 100);
-        ctx.fillStyle = 'pink';
+        ctx.strokeRect(50, 250, 100, 100);
+        ctx.strokeStyle = 'pink';
+        
+        ctx2.beginPath();
+        ctx2.moveTo(rightWrist.position.x, rightWrist.position.y);
+        ctx2.lineTo(leftWrist.position.x, leftWrist.position.y);
+        ctx2.stroke();
+        ctx2.lineWidth="5";
+        ctx2.strokeStyle = 'blue';
+
+        ctx2.beginPath();
+        ctx2.moveTo(rightHip.position.x, rightHip.position.y);
+        ctx2.lineTo(leftHip.position.x, leftHip.position.y)
+        ctx2.stroke();
+        ctx2.strokeStyle = 'pink';
         
 
+        connectParts(leftShoulder, rightShoulder);
         // draw left wrist
         // ctx.beginPath();
         // ctx.arc(leftHip.position.x, leftHip.position.y, 10, 0, 2 * Math.PI);
         // ctx.fillStyle = 'pink'
         // ctx.fill()
 
-        // // draw right wrist
-        // ctx.beginPath();
-        // ctx.arc(rightHip.position.x, rightHip.position.y, 10, 0, 2 * Math.PI);
-        // ctx.fillStyle = 'pink'
-        // ctx.fill()
+        // draw right wrist
+       
 
         // ctx.beginPath();
         // ctx.arc(leftElbow.position.x, leftElbow.position.y, 10, 0, 2 * Math.PI);
@@ -125,10 +156,19 @@ function drawCameraIntoCanvas() {
         // ctx.fillStyle = 'blue'
         // ctx.fill()
     }
+    
     flipContext();
+    flipContext2();
     requestAnimationFrame(drawCameraIntoCanvas)
 }
 
+function connectParts(part1, part2) {
+    ctx.strokeStyle= "#2B2A2A";
+    ctx.lineWidth= "10";
+    ctx.moveTo(part1.position.x, part1.position.y);
+    ctx.lineTo(part2.position.x, part2.position.y);
+    ctx.stroke();
+  }
 /* ----- run ------ */
 
 // start body detecting 
