@@ -113,6 +113,7 @@ function drawCameraIntoCanvas() {
     ctx.fillStyle = '#2B2A2A'
     ctx.fill()
 
+    
     ctx.lineWidth= "20";
     connectParts(leftShoulder, rightShoulder);
     connectParts(leftShoulder, leftElbow);
@@ -126,7 +127,7 @@ function drawCameraIntoCanvas() {
     connectParts(rightHip,rightKnee);
     connectParts(leftKnee, leftAnkle);
     connectParts(rightKnee, rightAnkle);
-
+    
     
     /*
     drawPart(nose);
@@ -144,7 +145,7 @@ function drawCameraIntoCanvas() {
     drawPart(rightKnee);
     drawPart(leftAnkle);
     drawPart(rightAnkle);
-*/
+    */
 
     areaRadius = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))/3;
   
@@ -163,10 +164,12 @@ function drawCameraIntoCanvas() {
         
         console.log("hit")
 
-        bubbles[i].x += bubbles[i].velocityX/6;
-        bubbles[i].y += bubbles[i].velocityX/6;
+        bubbles[i].x += bubbles[i].velocityX/10;
+        bubbles[i].y += bubbles[i].velocityX/10;
 
       } 
+
+      
 
       if(bubbles[i].velocityX > 0){
       bubbles[i].velocityX --;
@@ -185,6 +188,43 @@ function drawCameraIntoCanvas() {
      // console.log("distance" + distanceWristAndBubble);
     }
 
+    for(let i = 0; i < bubbles.length; i++){
+      let bubbleX = bubbles[i].x;
+      let bubbleY = bubbles[i].y;
+      let NoseX = nose.position.x;
+      let NoseY = nose.position.y;
+
+      let distanceNoseAndBubble = Math.sqrt(Math.pow((bubbleX - NoseX), 2) + Math.pow((bubbleY - NoseY), 2))
+      if(distanceNoseAndBubble < 40){
+        bubbles[i].velocityX = Math.atan((bubbles[i].y - nose.position.y)/(bubbles[i].x - nose.position.x)) * nose.speed.absoluteSpeed;
+        bubbles[i].velocityY = Math.asin((bubbles[i].y - nose.position.y)/(bubbles[i].x - nose.position.x)) * nose.speed.absoluteSpeed;
+        console.log(bubbles[i].velocityX);
+        
+        console.log("hit")
+
+        bubbles[i].x += bubbles[i].velocityX/3;
+        bubbles[i].y += bubbles[i].velocityX/3;
+
+      } 
+
+      
+
+      if(bubbles[i].velocityX > 0){
+      bubbles[i].velocityX --;
+      }
+      if(bubbles[i].velocityY > 0){
+      bubbles[i].velocityY --;
+      }
+      if(bubbles[i].velocityX < 0){
+        bubbles[i].velocityX ++;
+      }
+      if(bubbles[i].velocityY < 0){
+        bubbles[i].velocityY ++;
+      }
+  
+
+     // console.log("distance" + distanceWristAndBubble);
+    }
    // console.log(rightWrist.speed.absoluteSpeed)
     
   }
