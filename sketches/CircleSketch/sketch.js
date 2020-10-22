@@ -30,9 +30,6 @@ bodies.addEventListener('bodiesDetected', (e) => {
 })
 
 
-
-
-
 // get elements
 let video = document.getElementById("video");
 let canvas = document.getElementById("canvas");
@@ -41,15 +38,15 @@ let ctx = canvas.getContext("2d");
 let body
 
 let increase = false;
-let squareSize = 20;
+let circleSize = 20;
 
 let isFlipped = false;
 
 let xpos = video.width / 2;
-let ypos = video.height /2;
+let ypos = video.height / 2;
 
-let xdirection = 0.5; // Left or Right
-let ydirection = 0.5;
+let xdirection = 1; // Left or Right
+let ydirection = 2;
 
 function flipContext() {
   if (isFlipped == false) {
@@ -116,9 +113,7 @@ function drawCameraIntoCanvas() {
 
 
 
-    // if(rightWrist.position.x > 150 && rightWrist.position.x < 170 ){
-    //     ctx.strokeStyle = 'black';
-    // }
+
 
     //equilibrium of the body
 
@@ -128,104 +123,72 @@ function drawCameraIntoCanvas() {
     //console.log(centroidy);
 
     ctx.beginPath();
-    ctx.arc(centroidx, centroidy, 10, 0, 2 * Math.PI);
-    ctx.fillStyle = 'pink';
-    ctx.fill();
-
-
+    let centroidCircle = ctx.arc(centroidx, centroidy, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.strokeStyle = 'pink';
+    
+    
     
 
-    //ctx.strokeRect(video.width/2 - 90,video.height/2-10, squareSize, squareSize);
+
+
+    //ctx.strokeRect(video.width/2 - 90,video.height/2-10, circleSize, circleSize);
     ctx.beginPath();
-    ctx.arc(xpos, ypos, squareSize, 10, 0, 2 * Math.PI);
+    let circle = ctx.arc(xpos, ypos, circleSize, 10, 0, 2 * Math.PI);
     //ctx.arc()
-    ctx.stroke();
+    ctx.fill();
+    
+
+    let newCenterCentroidx = centroidx - 10;
+    let newCenterCirclex = xpos- circleSize;
+
+    let newCenterCentroidy = centroidy;
+    let newCenterCircley = ypos;
+
+    let circleDistance = Math.sqrt(Math.pow((newCenterCentroidx-newCenterCirclex),2)+Math.pow((newCenterCentroidy-newCenterCircley),2))
+
+    console.log(circleDistance);
+    //console.log(newCenterCircle);
+
+    if(circleDistance < circleSize) {
+      console.log("true");
+      ctx.fillStyle='pink';
+    }else{
+      ctx.fillStyle= 'white';
+    } 
+
+
 
     if (increase == false) {
-      squareSize = squareSize + 0.2;
+      circleSize = circleSize + 0.2;
 
     }
 
     if (increase == true) {
-      squareSize = squareSize - 0.2;
+      circleSize = circleSize - 0.2;
     }
 
-    if (squareSize > 150) {
+    if (circleSize > 150) {
       increase = true;
     }
-    if (squareSize < 20) {
+    if (circleSize < 20) {
       increase = false;
     }
 
-    xpos = xpos +1 * xdirection;
-    ypos = ypos +1 * ydirection;
+    xpos = xpos + 1 * xdirection;
+    ypos = ypos + 1 * ydirection;
 
-    if (xpos > video.width - squareSize || xpos < squareSize ) {
+    if (xpos > video.width - circleSize || xpos < circleSize) {
       xdirection *= -1;
     }
-    if (ypos > video.height - squareSize || ypos < squareSize ) {
+    if (ypos > video.height - circleSize || ypos < circleSize) {
       ydirection *= -1;
     }
+    
+    
+    
 
 
-
-    //ctx.fillRect(50, 50, 100, 100);
-    ctx.strokeStyle = 'pink';
-
-    if (centroidx < 260 && centroidx > 225 && centroidy < 400 && centroidy > 370) {
-
-      ctx.strokeStyle = 'blue'
-    }
-
-    if (centroidx < 260 && centroidx > 225 && centroidy < 237 && centroidy > 200) {
-
-      ctx.strokeStyle = 'purple'
-    }
-
-    if (centroidx < 435 && centroidx > 400 && centroidy < 400 && centroidy > 370) {
-
-      ctx.strokeStyle = 'green'
-    }
-
-    if (centroidx < 435 && centroidx > 400 && centroidy < 237 && centroidy > 200) {
-
-      ctx.strokeStyle = 'yellow'
-    }
-
-
-    // draw left wrist
-    // ctx.beginPath();
-    // ctx.arc(leftHip.position.x, leftHip.position.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = 'pink'
-    // ctx.fill()
-
-    // // draw right wrist
-    // ctx.beginPath();
-    // ctx.arc(rightHip.position.x, rightHip.position.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = 'pink'
-    // ctx.fill()
-
-    // ctx.beginPath();
-    // ctx.arc(leftElbow.position.x, leftElbow.position.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = 'red'
-    // ctx.fill()
-
-    // // draw right wrist
-    // ctx.beginPath();
-    // ctx.arc(rightElbow.position.x, rightElbow.position.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = 'yellow'
-    // ctx.fill()
-
-    // ctx.beginPath();
-    // ctx.arc(leftShoulder.position.x, leftShoulder.position.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = 'blue'
-    // ctx.fill()
-
-    // // draw right wrist
-    // ctx.beginPath();
-    // ctx.arc(rightShoulder.position.x, rightShoulder.position.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = 'blue'
-    // ctx.fill()
   }
   flipContext();
 
