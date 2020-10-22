@@ -54,7 +54,8 @@ bodies.addEventListener("bodiesDetected", (e) => {
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
   // draw the video element into the canvas
-  ctx.drawImage(video, 0, 0, video.width, video.height);
+  ctx.clearRect(0,0,canvas.width, canvas.height)
+  //ctx.drawImage(video, 0, 0, video.width, video.height);
  
  //Add bubbles
   if (bubbles.length < bubblesAmount) {
@@ -103,9 +104,31 @@ function drawCameraIntoCanvas() {
     const leftAnkle = body.getBodyPart(bodyParts.leftAnkle);
     const rightAnkle = body.getBodyPart(bodyParts.rightAnkle);
 
-    
+    const eyeDist = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftEye, bodyParts.rightEye))
+    const wristDist = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))
 
-    // draw nose
+    //draw head
+    ctx.beginPath();
+    ctx.arc(nose.position.x, nose.position.y, eyeDist *1.7, 0, 2 * Math.PI);
+    ctx.fillStyle = '#2B2A2A'
+    ctx.fill()
+
+    ctx.lineWidth= "20";
+    connectParts(leftShoulder, rightShoulder);
+    connectParts(leftShoulder, leftElbow);
+    connectParts(leftElbow, leftWrist);
+    connectParts(rightShoulder, rightElbow);
+    connectParts(rightElbow, rightWrist);
+    connectParts(rightShoulder, rightHip);
+    connectParts(leftShoulder, leftHip);
+    connectParts(leftHip, rightHip);
+    connectParts(leftHip,leftKnee);
+    connectParts(rightHip,rightKnee);
+    connectParts(leftKnee, leftAnkle);
+    connectParts(rightKnee, rightAnkle);
+
+    
+    /*
     drawPart(nose);
     drawPart(leftEye);
     drawPart(rightEye);
@@ -121,6 +144,10 @@ function drawCameraIntoCanvas() {
     drawPart(rightKnee);
     drawPart(leftAnkle);
     drawPart(rightAnkle);
+*/
+
+    areaRadius = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))/3;
+  
     
     for(let i = 0; i < bubbles.length; i++){
       let bubbleX = bubbles[i].x;
@@ -136,8 +163,8 @@ function drawCameraIntoCanvas() {
         
         console.log("hit")
 
-        bubbles[i].x += bubbles[i].velocityX/3;
-        //bubbles[i].y += bubbles[i].velocityY/3;
+        bubbles[i].x += bubbles[i].velocityX/6;
+        bubbles[i].y += bubbles[i].velocityX/6;
 
       } 
 
@@ -167,7 +194,6 @@ function drawCameraIntoCanvas() {
   for (let i = 0; i < bubbles.length; i++) {
     drawBubble(bubbles[i].x, bubbles[i].y, bubbles[i].size);
   }
-  
   window.requestAnimationFrame(drawCameraIntoCanvas);
 }
 
@@ -202,6 +228,14 @@ function createNodes(numNodes, radius) {
   }
   
   
+}
+
+function connectParts(part1, part2) {
+  ctx.strokeStyle= "#2B2A2A";
+  ctx.lineWidth= "20";
+  ctx.moveTo(part1.position.x, part1.position.y);
+  ctx.lineTo(part2.position.x, part2.position.y);
+  ctx.stroke();
 }
 
 function flipContext(){
