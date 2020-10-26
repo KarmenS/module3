@@ -2,6 +2,7 @@
 
 /* ----- setup ------ */
 
+//setting up variables
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -15,8 +16,10 @@ let bubbles = [];
 let nodes = [];
 let areaRadius = 100;
 
+//counts the "time" since the sketch started to gradually move the nodes around in a circle
 let counter = 0;
 
+//schematics for bubbles and node objects
 class Bubble {
   constructor(x, y) {
     this.x = x;
@@ -42,7 +45,7 @@ const bodies = new BodyStream({
   architecture: modelArchitecture.MobileNetV1,
   detectionType: detectionType.singleBody,
   videoElement: document.getElementById("video"),
-  samplingRate: 250,
+  samplingRate: 50, //changing this changes the speed at which the body updates, lower the number faster the updates. (250 originally)
 });
 
 let body;
@@ -56,10 +59,10 @@ bodies.addEventListener("bodiesDetected", (e) => {
 // draw the video, nose and eyes into the canvas
 function drawCameraIntoCanvas() {
   // draw the video element into the canvas
-  ctx.clearRect(0,0,canvas.width, canvas.height)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   //ctx.drawImage(video, 0, 0, video.width, video.height);
- 
- //Add bubbles
+
+  //Add bubbles
   if (bubbles.length < bubblesAmount) {
     bubbles.push(new Bubble(50, 50));
   }
@@ -70,26 +73,27 @@ function drawCameraIntoCanvas() {
   //make bubbles follow the nodes
   for (let i = 0; i < bubbles.length; i++) {
     if (bubbles[i].x < nodes[i].x) {
-      bubbles[i].x ++;
+      bubbles[i].x++;
     }
 
     if (bubbles[i].x > nodes[i].x) {
-      bubbles[i].x --;
+      bubbles[i].x--;
     }
 
     if (bubbles[i].y < nodes[i].y) {
-      bubbles[i].y ++;
+      bubbles[i].y++;
     }
 
     if (bubbles[i].y > nodes[i].y) {
-      bubbles[i].y -- ;
+      bubbles[i].y--;
     }
   }
+
+  //adds to the "time" passed
   counter += 0.01;
 
-  // draw nose and eyes
   if (body) {
-    
+    //sets up bodyparts, unused ones should be removed when we commit to something.
     const nose = body.getBodyPart(bodyParts.nose);
     const leftEye = body.getBodyPart(bodyParts.leftEye);
     const rightEye = body.getBodyPart(bodyParts.rightEye);
@@ -106,128 +110,129 @@ function drawCameraIntoCanvas() {
     const leftAnkle = body.getBodyPart(bodyParts.leftAnkle);
     const rightAnkle = body.getBodyPart(bodyParts.rightAnkle);
 
-    const eyeDist = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftEye, bodyParts.rightEye))
-    const wristDist = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))
+    //distance-containers - unused atm
+    const eyeDist = Math.round(
+      body.getDistanceBetweenBodyParts(bodyParts.leftEye, bodyParts.rightEye)
+    );
+    const wristDist = Math.round(
+      body.getDistanceBetweenBodyParts(
+        bodyParts.leftWrist,
+        bodyParts.rightWrist
+      )
+    );
 
+    //updates the centroid position
     centroid = {
-      radius: 100,  
-      x: ( leftShoulder.position.x + rightShoulder.position.x + leftWrist.position.x + rightWrist.position.x + leftKnee.position.x + rightKnee.position.x) / 6,
-      y: (leftShoulder.position.y + rightShoulder.position.y + leftWrist.position.y + rightWrist.position.y + leftKnee.position.y + rightKnee.position.y) / 6     
-    }
-    //draw head
+      radius: 100,
+      x:
+        (leftShoulder.position.x +
+          rightShoulder.position.x +
+          leftWrist.position.x +
+          rightWrist.position.x +
+          leftKnee.position.x +
+          rightKnee.position.x) /
+        6,
+      y:
+        (leftShoulder.position.y +
+          rightShoulder.position.y +
+          leftWrist.position.y +
+          rightWrist.position.y +
+          leftKnee.position.y +
+          rightKnee.position.y) /
+        6,
+    };
+
+    //draw center of the cloud
     ctx.beginPath();
-    ctx.arc(centroid.x- centroid.radius, centroid.y, centroid.radius, 0, 2 * Math.PI);
-    ctx.fillStyle = '#2B2A2A'
-    ctx.fill()
+    ctx.arc(centroid.x, centroid.y, centroid.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "#2B2A2A";
+    ctx.fill();
 
-      //the centroid of the circle doesn't appear to be in the middle of 
-      //the abstract pink shape  I created so maybe to look into aswell.
+    //the centroid of the circle doesn't appear to be in the middle of
+    //the abstract pink shape  I created so maybe to look into aswell.
 
+    //draws the cloud
     ctx.beginPath();
-        ctx.globalAlpha = 0.5;
-        ctx.moveTo(leftShoulder.position.x, leftShoulder.position.y);
-        ctx.lineTo(rightShoulder.position.x, rightShoulder.position.y);
-       // ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
-        ctx.lineTo(rightWrist.position.x, rightWrist.position.y);
-        ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
-        ctx.lineTo(leftKnee.position.x, leftKnee.position.y);
-        ctx.lineTo(leftWrist.position.x, leftWrist.position.y);
-        
-        ctx.fillStyle = 'pink';
-        ctx.fill();
-    /*
-    ctx.lineWidth= "20";
-    connectParts(leftShoulder, rightShoulder);
-    connectParts(leftShoulder, leftElbow);
-    connectParts(leftElbow, leftWrist);
-    connectParts(rightShoulder, rightElbow);
-    connectParts(rightElbow, rightWrist);
-    connectParts(rightShoulder, rightHip);
-    connectParts(leftShoulder, leftHip);
-    connectParts(leftHip, rightHip);
-    connectParts(leftHip,leftKnee);
-    connectParts(rightHip,rightKnee);
-    connectParts(leftKnee, leftAnkle);
-    connectParts(rightKnee, rightAnkle);
-    
-    
-    
-    drawPart(nose);
-    drawPart(leftEye);
-    drawPart(rightEye);
-    drawPart(leftShoulder);
-    drawPart(rightShoulder);
-    drawPart(leftElbow);
-    drawPart(rightElbow);
-    drawPart(leftWrist);
-    drawPart(rightWrist);
-    drawPart(leftHip);
-    drawPart(rightHip);
-    drawPart(leftKnee);
-    drawPart(rightKnee);
-    drawPart(leftAnkle);
-    drawPart(rightAnkle);
-    */
+    ctx.globalAlpha = 0.5;
+    ctx.moveTo(leftShoulder.position.x, leftShoulder.position.y);
+    ctx.lineTo(rightShoulder.position.x, rightShoulder.position.y);
+    // ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
+    ctx.lineTo(rightWrist.position.x, rightWrist.position.y);
+    ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
+    ctx.lineTo(leftKnee.position.x, leftKnee.position.y);
+    ctx.lineTo(leftWrist.position.x, leftWrist.position.y);
 
-    areaRadius = Math.round(body.getDistanceBetweenBodyParts(bodyParts.leftWrist, bodyParts.rightWrist))/3;
-  
+    ctx.fillStyle = "pink";
+    ctx.fill();
+ 
+    //calculates distance between wrists to use for radius of the nodes.
+    areaRadius =
+      Math.round(
+        body.getDistanceBetweenBodyParts(
+          bodyParts.leftWrist,
+          bodyParts.rightWrist
+        )
+      ) / 3;
     
-    
-    
-    for(let i = 0; i < bubbles.length; i++){
+    //loop to check for collision
+    for (let i = 0; i < bubbles.length; i++) {
       let bubbleX = bubbles[i].x;
       let bubbleY = bubbles[i].y;
-      
 
-      let distanceCentroidAndBubble = Math.sqrt(Math.pow((bubbleX - centroid.x), 2) + Math.pow((bubbleY - centroid.y), 2))
-      if(distanceCentroidAndBubble < 40){
-        bubbles[i].velocityX = Math.atan((bubbles[i].y - nose.position.y)/(bubbles[i].x - nose.position.x)) * nose.speed.absoluteSpeed;
-        bubbles[i].velocityY = Math.asin((bubbles[i].y - nose.position.y)/(bubbles[i].x - nose.position.x)) * nose.speed.absoluteSpeed;
-        //console.log(bubbles[i].velocityX);
+      let distanceCentroidAndBubble = Math.sqrt(
+        Math.pow(bubbleX - centroid.x, 2) + Math.pow(bubbleY - centroid.y, 2)
+      );
+      if (distanceCentroidAndBubble < 40) {
+        bubbles[i].velocityX =
+          Math.atan(
+            (bubbles[i].y - nose.position.y) / (bubbles[i].x - nose.position.x)
+          ) * nose.speed.absoluteSpeed;
+        bubbles[i].velocityY =
+          Math.asin(
+            (bubbles[i].y - nose.position.y) / (bubbles[i].x - nose.position.x)
+          ) * nose.speed.absoluteSpeed;
         
-        //console.log("hit")
 
-        bubbles[i].x += bubbles[i].velocityX/3;
-        bubbles[i].y += bubbles[i].velocityX/3;
+        //alters the position of bubbles
+        bubbles[i].x += bubbles[i].velocityX / 3;
+        bubbles[i].y += bubbles[i].velocityX / 3;
+      }
 
-      } 
-
-      if(distanceCentroidAndBubble < 150){
+      //makes the bubbles shiver once you're close, but not too close. This will be changed, to shiver when they're within the pink cloud
+      if (distanceCentroidAndBubble < 150) {
         bubbles[i].ShouldShiver = true;
-      }else {
+      } else {
         bubbles[i].ShouldShiver = false;
-       }
-      
+      }
 
-      if(bubbles[i].velocityX > 0){
-      bubbles[i].velocityX --;
+      //returns the velocity 
+      if (bubbles[i].velocityX > 0) {
+        bubbles[i].velocityX--;
       }
-      if(bubbles[i].velocityY > 0){
-      bubbles[i].velocityY --;
+      if (bubbles[i].velocityY > 0) {
+        bubbles[i].velocityY--;
       }
-      if(bubbles[i].velocityX < 0){
-        bubbles[i].velocityX ++;
+      if (bubbles[i].velocityX < 0) {
+        bubbles[i].velocityX++;
       }
-      if(bubbles[i].velocityY < 0){
-        bubbles[i].velocityY ++;
+      if (bubbles[i].velocityY < 0) {
+        bubbles[i].velocityY++;
       }
-  
-
     }
-   
   }
 
-  
-
+  //draws all the bubbles 
   for (let i = 0; i < bubbles.length; i++) {
     drawBubble(bubbles[i].x, bubbles[i].y, bubbles[i].size);
   }
-  
+
+  //executes the shiver thing
   shiver();
   window.requestAnimationFrame(drawCameraIntoCanvas);
 }
 
-function drawPart(part){
+//helper functions 
+function drawPart(part) {
   ctx.beginPath();
   ctx.arc(part.position.x, part.position.y, 10, 0, 2 * Math.PI);
   ctx.fillStyle = "red";
@@ -241,6 +246,7 @@ function drawBubble(x, y, size) {
   ctx.fill();
 }
 
+//function to create the nodes
 function createNodes(numNodes, radius) {
   nodes = [];
   let width = radius * 2 + 50;
@@ -249,6 +255,7 @@ function createNodes(numNodes, radius) {
   let x;
   let y;
   let i;
+
   for (i = 0; i < numNodes; i++) {
     angle = ((i + counter) / (numNodes / 2)) * Math.PI; // Calculate the angle at which the element will be placed.
     x = canvas.width / 2 - radius + radius * Math.cos(angle) + width / 2; // Calculate the x position of the element.
@@ -256,47 +263,40 @@ function createNodes(numNodes, radius) {
 
     nodes.push(new Node(x, y));
   }
-  
-  
 }
 
+//another helper function
 function connectParts(part1, part2) {
-  ctx.strokeStyle= "#2B2A2A";
-  ctx.lineWidth= "20";
+  ctx.strokeStyle = "#2B2A2A";
+  ctx.lineWidth = "20";
   ctx.moveTo(part1.position.x, part1.position.y);
   ctx.lineTo(part2.position.x, part2.position.y);
   ctx.stroke();
 }
 
-function shiver (){
-  for(let i = 0; i < bubbles.length; i++){
-    if(bubbles[i].ShouldShiver === true){
-      bubbles[i].x += Math.random()*6 - 3; 
+//function to check if bubbles should shiver and then does it.
+function shiver() {
+  for (let i = 0; i < bubbles.length; i++) {
+    if (bubbles[i].ShouldShiver === true) {
+      bubbles[i].x += Math.random() * 6 - 3;
     }
   }
 }
 
-function flipContext(){
-  if(isFlipped == false){
-      ctx.translate(canvas.width, 0);
-      // flip context horizontally
-      ctx.scale(-1, 1);
-      isFlipped = true;
-      
-  } else if(isFlipped == true){
-      ctx.translate(canvas.width, 0);
-      // flip context horizontally
-      ctx.scale(-1, 1);
-      isFlipped = false;
-  
+//flips the context to improve the physiology
+function flipContext() {
+  if (isFlipped == false) {
+    ctx.translate(canvas.width, 0);
+    // flip context horizontally
+    ctx.scale(-1, 1);
+    isFlipped = true;
+  } else if (isFlipped == true) {
+    ctx.translate(canvas.width, 0);
+    // flip context horizontally
+    ctx.scale(-1, 1);
+    isFlipped = false;
   }
-  }
-  
-
-
-
-
-
+}
 
 /* ----- run ------ */
 
