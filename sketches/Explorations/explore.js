@@ -20,6 +20,9 @@ let averageDistToCentroid;
 let bubbleSpeed = 1;
 let nodeSpeed = 0.5;
 
+let circlesX = 0;
+let circlesY = 0;
+
 //counts the "time" since the sketch started to gradually move the nodes around in a circle
 let counter = 0;
 
@@ -78,6 +81,8 @@ function drawCameraIntoCanvas() {
 
   //make bubbles follow the nodes
   for (let i = 0; i < bubbles.length; i++) {
+
+    
     if (bubbles[i].x < nodes[i].x) {
       bubbles[i].x+= bubbleSpeed;
     }
@@ -93,6 +98,7 @@ function drawCameraIntoCanvas() {
     if (bubbles[i].y > nodes[i].y) {
       bubbles[i].y-= bubbleSpeed;
     }
+  
   }
 
   //adds to the "time" passed
@@ -144,6 +150,7 @@ function drawCameraIntoCanvas() {
     nodeSpeed = 0.01 + centroidSpeed/700 
     * 0.3
 
+  
 
     if (bubbleSpeed >= 0){
       bubbleSpeed -= 0.05
@@ -171,6 +178,8 @@ function drawCameraIntoCanvas() {
           rightKnee.position.y) /
         6,
     };
+    circlesX = centroid.x - centroid.radius
+    circlesY = centroid.y
 
     //draw center of the cloud
     
@@ -258,7 +267,8 @@ distToCentroid(rightWrist)) /
 
   //draws all the bubbles 
   for (let i = 0; i < bubbles.length; i++) {
-    drawBubble(bubbles[i].x, bubbles[i].y, bubbles[i].size);
+    drawBubble(bubbles[i].x, bubbles[i].y, bubbles[i].size);              //choose which one you want
+   // drawBubble(nodes[i].x, nodes[i].y, bubbles[i].size);      
   }
 
   //executes the shiver thing
@@ -283,6 +293,7 @@ function drawBubble(x, y, size) {
 
 //function to create the nodes
 function createNodes(numNodes, radius) {
+  
   nodes = [];
   let width = radius * 2 + 50;
   let height = radius * 2 + 50;
@@ -290,14 +301,16 @@ function createNodes(numNodes, radius) {
   let x;
   let y;
   let i;
+  
 
   for (i = 0; i < numNodes; i++) {
     angle = ((i + counter) / (numNodes / 2)) * Math.PI; // Calculate the angle at which the element will be placed.
-    x = canvas.width / 2 - radius + radius * Math.cos(angle) + width / 2; // Calculate the x position of the element.
-    y = canvas.height / 2 - radius + radius * Math.sin(angle) + width / 2; // Calculate the y position of the element.
+    x = circlesX + radius * Math.cos(angle) + width / 2; // Calculate the x position of the element.
+    y = circlesY - radius + radius * Math.sin(angle) + width / 2; // Calculate the y position of the element.
 
     nodes.push(new Node(x, y));
   }
+
 }
 
 //another helper function
