@@ -9,13 +9,16 @@ const ctx = canvas.getContext("2d");
 
 let isFlipped = false;
 
-let bubblesAmount = 32;
+let bubblesAmount = 12;
 let centroid;
 
 let bubbles = [];
 let nodes = [];
 let areaRadius = 100;
 let averageDistToCentroid;
+
+let bubbleSpeed = 1;
+let nodeSpeed = 0.5;
 
 //counts the "time" since the sketch started to gradually move the nodes around in a circle
 let counter = 0;
@@ -60,7 +63,9 @@ bodies.addEventListener("bodiesDetected", (e) => {
 // draw the video
 function drawCameraIntoCanvas() {
   // draw the video element into the canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.fillStyle="#F5CF95"
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   //ctx.drawImage(video, 0, 0, video.width, video.height);
 
   //Add bubbles
@@ -74,24 +79,24 @@ function drawCameraIntoCanvas() {
   //make bubbles follow the nodes
   for (let i = 0; i < bubbles.length; i++) {
     if (bubbles[i].x < nodes[i].x) {
-      bubbles[i].x+= 5;
+      bubbles[i].x+= bubbleSpeed;
     }
 
     if (bubbles[i].x > nodes[i].x) {
-      bubbles[i].x-= 5;
+      bubbles[i].x-= bubbleSpeed;
     }
 
     if (bubbles[i].y < nodes[i].y) {
-      bubbles[i].y+= 5;
+      bubbles[i].y+= bubbleSpeed;
     }
 
     if (bubbles[i].y > nodes[i].y) {
-      bubbles[i].y-= 5;
+      bubbles[i].y-= bubbleSpeed;
     }
   }
 
   //adds to the "time" passed
-  counter += 0.5;
+  counter += nodeSpeed;
 
   if (body) {
     //sets up bodyparts, unused ones should be removed when we commit to something.
@@ -122,6 +127,29 @@ function drawCameraIntoCanvas() {
       )
     );
 
+    let centroidSpeed = 
+    (rightWrist.speed.absoluteSpeed + 
+    leftWrist.speed.absoluteSpeed +
+    leftShoulder.speed.absoluteSpeed +
+    leftKnee.speed.absoluteSpeed +
+    rightShoulder.speed.absoluteSpeed +
+    rightKnee.speed.absoluteSpeed) /
+    6;
+  
+    console.log(bubbleSpeed)
+
+    //Mapping the speed
+    bubbleSpeed +=  centroidSpeed/700 
+    * 0.3;
+    nodeSpeed = 0.01 + centroidSpeed/700 
+    * 0.3
+
+
+    if (bubbleSpeed >= 0){
+      bubbleSpeed -= 0.05
+    } else if (bubbleSpeed<0){
+      bubbleSpeed++;
+    }
     //updates the centroid position
     centroid = {
       radius: 50,
@@ -147,7 +175,7 @@ function drawCameraIntoCanvas() {
     
     ctx.beginPath();
     ctx.arc(centroid.x, centroid.y, centroid.radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "#2B2A2A";
+    ctx.fillStyle = "#FF723D";
     ctx.fill();
     
     
@@ -156,19 +184,9 @@ function drawCameraIntoCanvas() {
     //the abstract pink shape  I created so maybe to look into aswell.
 
     //draws the cloud
-    ctx.beginPath();
-    ctx.globalAlpha = 0.5;
-    ctx.moveTo(leftShoulder.position.x, leftShoulder.position.y);
-    ctx.lineTo(rightShoulder.position.x, rightShoulder.position.y);
-    // ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
-    ctx.lineTo(rightWrist.position.x, rightWrist.position.y);
-    ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
-    ctx.lineTo(leftKnee.position.x, leftKnee.position.y);
-    ctx.lineTo(leftWrist.position.x, leftWrist.position.y);
-
-    ctx.fillStyle = "pink";
-    ctx.fill();
     
+    ctx.globalAlpha = 0.9;
+ 
     averageDistToCentroid =
 (distToCentroid(leftWrist) +
 distToCentroid(leftShoulder) + 
@@ -177,18 +195,19 @@ distToCentroid(rightKnee) +
 distToCentroid(leftKnee) + 
 distToCentroid(rightWrist)) /
 6;
-console.log(averageDistToCentroid);
+//console.log(averageDistToCentroid);
  
     //calculates distance between wrists to use for radius of the nodes.
     areaRadius =
-      Math.round(
+    /*  Math.round(
         body.getDistanceBetweenBodyParts(
           bodyParts.leftWrist,
           bodyParts.rightWrist
         )
       ) / 3;
       
-    
+    */
+          130
     //loop to check for collision
     for (let i = 0; i < bubbles.length; i++) {
       let bubbleX = bubbles[i].x;
@@ -197,7 +216,7 @@ console.log(averageDistToCentroid);
       let distanceCentroidAndBubble = Math.sqrt(
         Math.pow(bubbleX - centroid.x, 2) + Math.pow(bubbleY - centroid.y, 2)
       );
-      if (distanceCentroidAndBubble < 50) {
+      if (distanceCentroidAndBubble < 0) {
         bubbles[i].velocityX =
           Math.atan(
             (bubbles[i].y - nose.position.y) / (bubbles[i].x - nose.position.x)
@@ -242,7 +261,7 @@ console.log(averageDistToCentroid);
   }
 
   //executes the shiver thing
-  shiver();
+ // shiver();
   window.requestAnimationFrame(drawCameraIntoCanvas);
 }
 
@@ -256,7 +275,7 @@ function drawPart(part) {
 
 function drawBubble(x, y, size) {
   ctx.beginPath();
-  ctx.fillStyle = "#B0F1FA";
+  ctx.fillStyle = "#FFDD02";
   ctx.arc(x, y, size, 0, 2 * Math.PI);
   ctx.fill();
 }
