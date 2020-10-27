@@ -9,7 +9,7 @@ const ctx = canvas.getContext("2d");
 
 let isFlipped = false;
 
-let bubblesAmount = 12;
+let bubblesAmount = 32;
 let centroid;
 
 let bubbles = [];
@@ -22,18 +22,14 @@ let counter = 0;
 
 //schematics for bubbles and node objects
 class Bubble {
-  constructor(x, y, h, s, l) {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
     this.velocityX = 0;
     this.velocityY = 0;
     this.direction = 0;
     this.size = 15;
-    this.ShouldShiver = false,
-    this.hue = h,
-    this.saturation = s,
-    this.lightness = l;
-    
+    this.ShouldShiver = false;
   }
 }
 
@@ -64,15 +60,12 @@ bodies.addEventListener("bodiesDetected", (e) => {
 // draw the video
 function drawCameraIntoCanvas() {
   // draw the video element into the canvas
-  //ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   //ctx.drawImage(video, 0, 0, video.width, video.height);
 
   //Add bubbles
-
-  
   if (bubbles.length < bubblesAmount) {
-    bubbles.push(new Bubble(canvas.width/2, canvas.height/2, 263, 50, 50));
-    
+    bubbles.push(new Bubble(50, 50));
   }
 
   //create the points bubbles will follow
@@ -81,24 +74,24 @@ function drawCameraIntoCanvas() {
   //make bubbles follow the nodes
   for (let i = 0; i < bubbles.length; i++) {
     if (bubbles[i].x < nodes[i].x) {
-      bubbles[i].x++;
+      bubbles[i].x+= 5;
     }
 
     if (bubbles[i].x > nodes[i].x) {
-      bubbles[i].x--;
+      bubbles[i].x-= 5;
     }
 
     if (bubbles[i].y < nodes[i].y) {
-      bubbles[i].y++;
+      bubbles[i].y+= 5;
     }
 
     if (bubbles[i].y > nodes[i].y) {
-      bubbles[i].y--;
+      bubbles[i].y-= 5;
     }
   }
 
   //adds to the "time" passed
-  counter += 0.01;
+  counter += 0.5;
 
   if (body) {
     //sets up bodyparts, unused ones should be removed when we commit to something.
@@ -128,7 +121,6 @@ function drawCameraIntoCanvas() {
         bodyParts.rightWrist
       )
     );
-  
 
     //updates the centroid position
     centroid = {
@@ -151,6 +143,18 @@ function drawCameraIntoCanvas() {
         6,
     };
 
+    //draw center of the cloud
+    
+    ctx.beginPath();
+    ctx.arc(centroid.x, centroid.y, centroid.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "#2B2A2A";
+    ctx.fill();
+    
+    
+     
+    //the centroid of the circle doesn't appear to be in the middle of
+    //the abstract pink shape  I created so maybe to look into aswell.
+
     //draws the cloud
     ctx.beginPath();
     ctx.globalAlpha = 0.5;
@@ -161,8 +165,9 @@ function drawCameraIntoCanvas() {
     ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
     ctx.lineTo(leftKnee.position.x, leftKnee.position.y);
     ctx.lineTo(leftWrist.position.x, leftWrist.position.y);
-   
 
+    ctx.fillStyle = "pink";
+    ctx.fill();
     
     averageDistToCentroid =
 (distToCentroid(leftWrist) +
@@ -172,6 +177,7 @@ distToCentroid(rightKnee) +
 distToCentroid(leftKnee) + 
 distToCentroid(rightWrist)) /
 6;
+console.log(averageDistToCentroid);
  
     //calculates distance between wrists to use for radius of the nodes.
     areaRadius =
@@ -228,19 +234,11 @@ distToCentroid(rightWrist)) /
         bubbles[i].velocityY++;
       }
     }
-    for(let i = 0; i< bubbles.length; i++){
-      bubbles[i].saturation = wristDist/650 * 100;
-    }
   }
 
   //draws all the bubbles 
   for (let i = 0; i < bubbles.length; i++) {
-    ctx.beginPath();
-    ctx.fillStyle = 'hsl('+String(bubbles[i].hue)+',' +String(bubbles[i].saturation)+'%, '+ String(bubbles[i].lightness)+'%)';
-    ctx.arc(bubbles[i].x, bubbles[i].y, bubbles[i].size, 0, 2 * Math.PI);
-    ctx.fill();
-
-   
+    drawBubble(bubbles[i].x, bubbles[i].y, bubbles[i].size);
   }
 
   //executes the shiver thing
@@ -256,7 +254,12 @@ function drawPart(part) {
   ctx.fill();
 }
 
-
+function drawBubble(x, y, size) {
+  ctx.beginPath();
+  ctx.fillStyle = "#B0F1FA";
+  ctx.arc(x, y, size, 0, 2 * Math.PI);
+  ctx.fill();
+}
 
 //function to create the nodes
 function createNodes(numNodes, radius) {
