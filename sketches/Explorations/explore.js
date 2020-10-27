@@ -81,8 +81,7 @@ function drawCameraIntoCanvas() {
 
   //make bubbles follow the nodes
   for (let i = 0; i < bubbles.length; i++) {
-
-    
+ 
     if (bubbles[i].x < nodes[i].x) {
       bubbles[i].x+= bubbleSpeed;
     }
