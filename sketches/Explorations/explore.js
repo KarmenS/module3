@@ -147,8 +147,9 @@ function drawCameraIntoCanvas() {
 
     if (bubbleSpeed >= 0){
       bubbleSpeed -= 0.05
-    } else if (bubbleSpeed<0){
-      bubbleSpeed++;
+    }
+     if (nodeSpeed >= 0){
+      nodeSpeed -= 0.05
     }
     //updates the centroid position
     centroid = {
