@@ -18,7 +18,7 @@ let areaRadius = 100;
 let averageDistToCentroid;
 
 let bubbleSpeed = 1;
-let nodeSpeed = 0.5;
+let nodeSpeed = 1;
 
 //counts the "time" since the sketch started to gradually move the nodes around in a circle
 let counter = 0;
