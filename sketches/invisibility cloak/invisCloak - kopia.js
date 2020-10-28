@@ -16,7 +16,6 @@ let bubbles = [];
 let nodes = [];
 let areaRadius = 100;
 let averageDistToCentroid;
-let opacity = 0;
 
 //counts the "time" since the sketch started to gradually move the nodes around in a circle
 let counter = 0;
@@ -134,7 +133,7 @@ function drawCameraIntoCanvas() {
     6;
 
     //Add bubbles
-    if (averageDistToCentroid > 180 && centroidSpeed > 370) {
+    if (averageDistToCentroid > 180 && centroidSpeed > 400) {
       bubbles.push(new Bubble(centroid.x, centroid.y));
     }
     //remove bubbles
@@ -178,15 +177,19 @@ function drawCameraIntoCanvas() {
 
     //draws the cloud
     ctx.beginPath();
-    ctx.globalAlpha = opacity;
-    ctx.moveTo(leftShoulder.position.x , leftShoulder.position.y);
-    ctx.lineTo(rightShoulder.position.x - 5, rightShoulder.position.y);
-   
+    ctx.globalAlpha = 0.5;
+    ctx.arc(leftShoulder.position.x , leftShoulder.position.y, 100, 0, 2 * Math.PI);
+    ctx.beginPath();
+    ctx.arc(rightShoulder.position.x - 5, rightShoulder.position.y, 100, 0, 2 * Math.PI);
+    ctx.beginPath();
     // ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
-    ctx.lineTo(rightWrist.position.x, rightWrist.position.y);
-    ctx.lineTo(rightKnee.position.x, rightKnee.position.y);
-    ctx.lineTo(leftKnee.position.x, leftKnee.position.y);
-    ctx.lineTo(leftWrist.position.x, leftWrist.position.y);
+    ctx.arc(rightWrist.position.x, rightWrist.position.y, 100, 0, 2 * Math.PI);
+    ctx.beginPath();
+    ctx.arc(rightKnee.position.x, rightKnee.position.y, 100, 0, 2 * Math.PI);
+    ctx.beginPath();
+    ctx.arc(leftKnee.position.x, leftKnee.position.y, 100, 0, 2 * Math.PI);
+    ctx.beginPath();
+    ctx.arc(leftWrist.position.x, leftWrist.position.y, 100, 0, 2 * Math.PI);
 
     ctx.fillStyle = "pink";
     ctx.fill();
@@ -199,9 +202,7 @@ distToCentroid(rightKnee) +
 distToCentroid(leftKnee) + 
 distToCentroid(rightWrist)) /
 6;
-
-opacity = centroidSpeed / 700
-
+console.log(centroidSpeed);
  
     //calculates distance between wrists to use for radius of the nodes.
     areaRadius =
