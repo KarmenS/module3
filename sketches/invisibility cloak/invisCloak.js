@@ -280,6 +280,7 @@ function drawPart(part) {
 
 function drawBubble(x, y, size) {
   ctx.beginPath();
+  ctx.globalAlpha = 0.5;
   ctx.fillStyle = "#B0F1FA";
   ctx.arc(x, y, size, 0, 2 * Math.PI);
   ctx.fill();
